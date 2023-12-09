@@ -14,7 +14,7 @@ git clone https://github.com/orlovzzz/TaskManagmentSystem
 * Install and run Docker
 * Open root directory
 * Write ```docker compose up``` in terminal
-* Go to the registration page
+* Register new user
 ```
 http://localhost:8080/account/registrarion
 ```
