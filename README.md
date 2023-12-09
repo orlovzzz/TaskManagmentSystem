@@ -1,10 +1,10 @@
 # Task Managment System
 
 ### Technologies stack
-* Frontend: HTML
+* Documentation: Swagger
 * Backend: Spring Boot
-* Databases: MongoDB, PostgreSQL
-* GRPC
+* Databases: PostgreSQL
+* Security: Spring Security, JWT
 ## Start service
 
 * Clone project
