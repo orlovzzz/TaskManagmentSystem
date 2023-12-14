@@ -3,7 +3,7 @@
 ### Technologies stack
 * Documentation: Swagger
 * Backend: Spring Boot
-* Databases: PostgreSQL
+* Database: PostgreSQL
 * Security: Spring Security, JWT
 ## Start service
 
@@ -18,7 +18,7 @@ git clone https://github.com/orlovzzz/TaskManagmentSystem
 ```
 http://localhost:8080/account/registrarion
 ```
-To view documentation, enter in your browser
+* To view documentation, enter in your browser
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
