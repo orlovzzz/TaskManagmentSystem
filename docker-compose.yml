@@ -1,0 +1,36 @@
+# services:
+#   db:
+#     image: postgres:latest
+#     ports:
+#       - 5432:5432
+#     environment:
+#       POSTGRES_DB: task
+#       POSTGRES_PASSWORD: 1234
+#       POSTGRES_USER: postgres
+
+#   tasks:
+#     build:
+#       dockerfile: ./Dockerfile
+#     ports:
+#       - 8080:8080
+#     depends_on:
+#       - db
+
+services:
+  taskService:
+    image: postgres:latest
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: "task"
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_USER: "postgres"
+  
+  accountService:
+    image: postgres:latest
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_DB: "task"
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_USER: "postgres"
