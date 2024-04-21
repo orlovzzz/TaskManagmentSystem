@@ -12,9 +12,4 @@ public class AccountService {
     private AccountRepository accountRepository;
     @Autowired
     private JwtUtils jwtUtils;
-
-    public void getAllAccounts(String token) {
-        System.out.println(jwtUtils.extractSubject(token));
-    }
-
 }

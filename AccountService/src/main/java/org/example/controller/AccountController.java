@@ -21,7 +21,7 @@ public class AccountController {
     @GetMapping("/accounts")
 //    @RolesAllowed({ "USER", "EXECUTOR", "ADMIN" })
     public ResponseEntity<List<AccountDTO>> getAllAccounts(@RequestParam("token") String token) {
-        accountService.getAllAccounts(token);
+//        accountService.getAllAccounts(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -8,8 +8,15 @@ import org.example.repository.AccountRepository;
 import org.example.repository.AuthorityRepository;
 import org.example.roles.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Service
 public class AuthService {
@@ -22,6 +29,8 @@ public class AuthService {
     private AccountRepository accountRepository;
     @Autowired
     private AuthorityRepository authorityRepository;
+    @Value("${auth.service.url}")
+    private String AUTH_URL;
 
     public ResponseDTO checkUserForLogin(AccountDTO accountDTO) {
         Account account = accountRepository.findByEmail(accountDTO.getEmail()).orElse(null);
@@ -44,5 +53,11 @@ public class AuthService {
         account.setAuthority(authorityRepository.findByRole(Roles.USER).orElse(null));
         accountRepository.save(account);
         return new ResponseDTO(true, null);
+    }
+
+    public boolean isTokenInBlacklist(String token) {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(AUTH_URL, HttpMethod.GET, HttpEntity.EMPTY, String.class, Map.of("token", token));
+        return Boolean.getBoolean(response.getBody());
     }
 }

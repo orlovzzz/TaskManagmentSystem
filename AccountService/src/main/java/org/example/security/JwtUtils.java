@@ -17,8 +17,12 @@ public class JwtUtils {
     @Value("${secret.key}")
     private String secretKey;
 
-    public String extractSubject(String token) {
+    public String extractAccountId(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public boolean isTokenValid(String token, String id) {
+        return (id.equals(extractAccountId(token)) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
