@@ -34,6 +34,6 @@ public class LoginService {
             return new ResponseDTO(false, "Wrong email or password");
         }
         String jwt = jwtUtils.generateToken(responseDTO.getAccount().getId(), account.getEmail(), account.getPassword());
-        return new ResponseDTO(true, jwt);
+        return new ResponseDTO(true, "Bearer " + jwt);
     }
 }

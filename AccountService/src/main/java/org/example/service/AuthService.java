@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 
@@ -57,7 +58,9 @@ public class AuthService {
 
     public boolean isTokenInBlacklist(String token) {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(AUTH_URL, HttpMethod.GET, HttpEntity.EMPTY, String.class, Map.of("token", token));
-        return Boolean.getBoolean(response.getBody());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(AUTH_URL + "/blacklist")
+                .queryParam("token", token);
+        String response = restTemplate.getForObject(builder.toUriString(), String.class);
+        return Boolean.getBoolean(response);
     }
 }
