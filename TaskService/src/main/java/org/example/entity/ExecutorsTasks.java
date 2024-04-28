@@ -1,19 +1,16 @@
 package org.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "executors_task")
-public class ExecutorsTasks {
-    private UUID executorId;
-    @ManyToOne
-    @JoinColumn(name = "task_id")
-    private Task task;
+@Table(name = "executors_tasks")
+@Embeddable
+public class ExecutorsTasks implements Serializable {
+    @EmbeddedId
+    ExecutorsTasksId executorsTasksId;
 }

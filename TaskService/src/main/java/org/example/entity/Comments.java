@@ -13,4 +13,8 @@ public class Comments {
     private UUID id;
 
     private String comment;
+
+    @ManyToOne
+    @JoinColumn(name = "task_id")
+    private Task task;
 }

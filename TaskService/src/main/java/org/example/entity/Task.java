@@ -18,18 +18,17 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private String title;
+
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("PENDING")
     private Status status;
 
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
-    @OneToMany
-    @JoinColumn(name = "comment_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Comments> comments;
+    @Column(name = "author_id")
+    private UUID authorId;
 
 }
