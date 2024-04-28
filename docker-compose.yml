@@ -1,0 +1,23 @@
+services:
+  taskDatabase:
+    image: postgres:latest
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: "task"
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_USER: "postgres"
+  
+  accountDatabase:
+    image: postgres:latest
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_DB: "task"
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_USER: "postgres"
+
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379

@@ -1,0 +1,11 @@
+secret:
+  key: "gi5h4ni445985jv84b985b4h984bn98btn8b93v39rt3bt930vm30b4t3v3tiv38b"
+  duration: 3600000
+account.service.url: "http://localhost:8081"
+spring:
+  cache:
+    type: redis
+  data:
+    redis:
+      port: 6379
+      host: localhost
