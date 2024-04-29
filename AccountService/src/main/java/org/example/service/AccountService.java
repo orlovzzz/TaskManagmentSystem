@@ -27,7 +27,6 @@ public class AccountService {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-
     public List<AccountWithRolesDTO> getAllAccounts(String token) {
         UUID id = UUID.fromString(jwtUtils.extractAccountId(token));
         List<AccountWithRolesDTO> accountsList = accountRepository.findAll()

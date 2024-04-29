@@ -3,14 +3,13 @@ package org.example.controller;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.dto.TaskDTO;
+import org.example.dto.TaskWithExecutorsDTO;
 import org.example.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,7 +32,35 @@ public class TaskController {
         return new ResponseEntity<>(taskService.getTasks(), HttpStatus.OK);
     }
 
+    @PostMapping("/task/executor/{taskId}")
+    @RolesAllowed({"ADMIN", "EXECUTOR"})
+    public ResponseEntity setExecutorToTask(@PathVariable String taskId, HttpServletRequest request) {
+        taskService.setExecutorToTask(taskId, getTokenFromHeader(request));
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/task/{taskId}")
+    @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
+    public ResponseEntity<TaskWithExecutorsDTO> getTaskById(@PathVariable String taskId, HttpServletRequest request) {
+        return new ResponseEntity<>(taskService.getTaskById(taskId, getTokenFromHeader(request)), HttpStatus.OK);
+    }
+
+    @GetMapping("/task/account/{accountId}")
+    @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
+    public ResponseEntity<List<TaskDTO>> getTasksByAccountId(@PathVariable String accountId) {
+        return new ResponseEntity<>(taskService.getTasksByAccountId(accountId), HttpStatus.OK);
+    }
+
+    @PostMapping("/task/status/{taskId}")
+    @RolesAllowed({ "EXECUTOR" })
+    public ResponseEntity setTaskStatus(@PathVariable String taskId,
+                                        @RequestParam("status") String status,
+                                        HttpServletRequest request) {
+        taskService.setTaskStatus(taskId, status, getTokenFromHeader(request));
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     private String getTokenFromHeader(HttpServletRequest request) {
-        return request.getHeader("Authorization").substring("Bearer ".length());
+        return request.getHeader("Authorization");
     }
 }
