@@ -3,9 +3,12 @@ secret:
   duration: 3600000
 account.service.url: "http://localhost:8081"
 spring:
-  cache:
-    type: redis
   data:
     redis:
       port: 6379
       host: localhost
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
