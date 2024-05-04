@@ -19,6 +19,17 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+    @GetMapping("/myAccount")
+    @RolesAllowed({ "USER", "EXECUTOR", "ADMIN" })
+    public ResponseEntity<AccountWithRolesDTO> getMyAccount(HttpServletRequest request) {
+        try {
+            return new ResponseEntity<>(accountService.getAccountById(UUID.fromString(
+                    getTokenFromHeader(request).substring("Bearer ".length()))), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/accounts")
     @RolesAllowed({ "USER", "EXECUTOR", "ADMIN" })
     public ResponseEntity<List<AccountWithRolesDTO>> getAllAccounts(HttpServletRequest request) {
@@ -28,7 +39,11 @@ public class AccountController {
     @GetMapping("/accounts/{id}")
     @RolesAllowed({ "USER", "EXECUTOR", "ADMIN" })
     public ResponseEntity<AccountWithRolesDTO> getAccountById(@PathVariable String id) {
-        return new ResponseEntity<>(accountService.getAccountById(UUID.fromString(id)), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(accountService.getAccountById(UUID.fromString(id)), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/accounts")
