@@ -8,10 +8,12 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.4</version>
+        <relativePath/>
     </parent>
 
     <groupId>org.example</groupId>
-    <artifactId>AuthService</artifactId>
+    <artifactId>auth_service</artifactId>
+    <name>auth_service</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

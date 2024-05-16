@@ -6,6 +6,7 @@ import org.example.dto.AccountDTO;
 import org.example.dto.ResponseDTO;
 import org.example.dto.ResponseFromAccountServiceDTO;
 import org.example.jwt.JwtUtils;
+import org.example.producer.NotificationsProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class LoginService {
 
+    @Autowired
+    private NotificationsProducer notificationsProducer;
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 

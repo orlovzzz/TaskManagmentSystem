@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.service.BlacklistTokensService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,8 @@ public class BlacklistTokensController {
     private BlacklistTokensService blacklistTokensService;
 
     @PostMapping("/blacklist")
-    public ResponseEntity<String> addTokenInBlacklist(@RequestParam("token") String token) {;
+    public ResponseEntity<String> addTokenInBlacklist(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring("Bearer ".length());
         blacklistTokensService.addTokenToBlacklist(token);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
