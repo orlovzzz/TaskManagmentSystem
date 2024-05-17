@@ -1,4 +1,4 @@
-package org.example.producer;
+package org.example.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -8,7 +8,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NotificationsProducer {
+public class NotificationProducer {
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -16,8 +16,6 @@ public class NotificationsProducer {
 
     @SneakyThrows
     public void addMessageToNotificationsTopic(MessageDTO messageDTO) {
-        String json = objectMapper.writeValueAsString(messageDTO);
-        kafkaTemplate.send(TOPIC_NAME, json);
+        kafkaTemplate.send(TOPIC_NAME, objectMapper.writeValueAsString(messageDTO));
     }
-
 }

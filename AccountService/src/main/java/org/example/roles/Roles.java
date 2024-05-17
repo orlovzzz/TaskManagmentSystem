@@ -1,5 +1,5 @@
 package org.example.roles;
 
 public enum Roles {
-    ADMIN, USER, EXECUTOR
+    ROLE_ADMIN, ROLE_USER, ROLE_EXECUTOR
 }

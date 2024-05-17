@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(maxAge = 360000000)
 public class AccountController {
 
     @Autowired
@@ -23,9 +24,9 @@ public class AccountController {
     @RolesAllowed({ "USER", "EXECUTOR", "ADMIN" })
     public ResponseEntity<AccountWithRolesDTO> getMyAccount(HttpServletRequest request) {
         try {
-            return new ResponseEntity<>(accountService.getAccountById(UUID.fromString(
-                    getTokenFromHeader(request).substring("Bearer ".length()))), HttpStatus.OK);
+            return new ResponseEntity<>(accountService.getMyAccount(getTokenFromHeader(request)), HttpStatus.OK);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -38,6 +39,7 @@ public class AccountController {
 
     @GetMapping("/accounts/{id}")
     @RolesAllowed({ "USER", "EXECUTOR", "ADMIN" })
+    @CrossOrigin
     public ResponseEntity<AccountWithRolesDTO> getAccountById(@PathVariable String id) {
         try {
             return new ResponseEntity<>(accountService.getAccountById(UUID.fromString(id)), HttpStatus.OK);
@@ -50,6 +52,7 @@ public class AccountController {
     @RolesAllowed({ "USER" })
     public ResponseEntity<String> setAccountToExecutorRole(HttpServletRequest request) {
         try {
+            System.out.println(request.getHeader("Authorization"));
             accountService.setAccountToExecutorRole(getTokenFromHeader(request));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {

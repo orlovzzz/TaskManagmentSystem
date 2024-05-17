@@ -30,10 +30,4 @@ public class RedisConfiguration {
         return redisTemplate;
     }
 
-//    @PreDestroy
-//    public void closeConnectionFactory(LettuceConnectionFactory lettuceConnectionFactory) {
-//        lettuceConnectionFactory.stop();
-//        System.out.println(lettuceConnectionFactory.getConnection());
-//    }
-
 }

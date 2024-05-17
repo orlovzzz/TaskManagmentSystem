@@ -15,11 +15,11 @@ public class AuthorityConfig {
 
     @PostConstruct
     private void addAuthorities() {
-        authorityRepository.findByRole(Roles.ADMIN).ifPresentOrElse((value) -> value.getId(), () -> {
-            authorityRepository.save(new Authority(Roles.ADMIN));});
-        authorityRepository.findByRole(Roles.USER).ifPresentOrElse((value) -> value.getId(), () -> {
-            authorityRepository.save(new Authority(Roles.USER));});
-        authorityRepository.findByRole(Roles.EXECUTOR).ifPresentOrElse((value) -> value.getId(), () -> {
-            authorityRepository.save(new Authority(Roles.EXECUTOR));});
+        authorityRepository.findByRole(Roles.ROLE_ADMIN).ifPresentOrElse((value) -> value.getId(), () -> {
+            authorityRepository.save(new Authority(Roles.ROLE_ADMIN));});
+        authorityRepository.findByRole(Roles.ROLE_USER).ifPresentOrElse((value) -> value.getId(), () -> {
+            authorityRepository.save(new Authority(Roles.ROLE_USER));});
+        authorityRepository.findByRole(Roles.ROLE_EXECUTOR).ifPresentOrElse((value) -> value.getId(), () -> {
+            authorityRepository.save(new Authority(Roles.ROLE_EXECUTOR));});
     }
 }

@@ -3,6 +3,7 @@ package org.example.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.example.dto.AccountDTO;
+import org.example.dto.MessageDTO;
 import org.example.dto.ResponseDTO;
 import org.example.dto.ResponseFromAccountServiceDTO;
 import org.example.producer.NotificationsProducer;
@@ -29,10 +30,11 @@ public class RegistrationService {
         HttpEntity<AccountDTO> request = new HttpEntity<>(account);
         ResponseEntity<String> response = restTemplate.exchange(URL + "/createAccount", HttpMethod.POST, request, String.class);
         ResponseFromAccountServiceDTO responseFromService = objectMapper.readValue(response.getBody(), ResponseFromAccountServiceDTO.class);
-        if (responseFromService.isSuccess()) {
-            return new ResponseDTO(true, "");
+        if (!responseFromService.isSuccess()) {
+            return new ResponseDTO(false, "An account with this email has already been registered");
         }
-        return new ResponseDTO(false, "An account with this email has already been registered");
+        notificationsProducer.addMessageToNotificationsTopic(new MessageDTO(account.getEmail(), "Registration",
+                "You have successfully registered.\nDon't forget your password: " + account.getPassword()));
+        return new ResponseDTO(true, "");
     }
-
 }

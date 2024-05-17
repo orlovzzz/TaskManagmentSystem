@@ -39,6 +39,7 @@ public class Filter extends OncePerRequestFilter {
         if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(id);
             if (jwtUtils.isTokenValid(jwt, userDetails) && !authService.isTokenInBlacklist(jwt)) {
+                System.out.println(userDetails.getAuthorities());
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()

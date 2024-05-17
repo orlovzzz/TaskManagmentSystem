@@ -16,4 +16,7 @@ public interface ExecutorsTaskRepository extends JpaRepository<ExecutorsTasks, E
 
     @Query(value = "SELECT * FROM executors_tasks WHERE task_id = ?1", nativeQuery = true)
     List<ExecutorsTasks> findByTaskId(UUID id);
+
+    @Query(value = "SELECT * FROM executors_tasks WHERE executor_id = ?1", nativeQuery = true)
+    List<ExecutorsTasks> findByExecutorId(UUID id);
 }

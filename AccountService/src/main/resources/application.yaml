@@ -3,20 +3,25 @@ spring:
     allow-circular-references: true
   datasource:
     url: jdbc:postgresql://accountDatabase:5432/task
+#    url: jdbc:postgresql://localhost:5434/task
     username: postgres
     password: 1234
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  kafka:
+    bootstrap-servers: "kafka:29092"
+#    bootstrap-servers: "localhost:9092"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 server:
   port: 8081
 secret:
   key: "gi5h4ni445985jv84b985b4h984bn98btn8b93v39rt3bt930vm30b4t3v3tiv38b"
-auth:
-  service:
-    url: "http://auth:8080"
-
+auth.service.url: "http://auth:8080"
+#auth.service.url: "http://localhost:8080"
 logging:
   level:
     org.springframework.security: DEBUG

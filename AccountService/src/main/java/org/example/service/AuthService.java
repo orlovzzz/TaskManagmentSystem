@@ -51,7 +51,7 @@ public class AuthService {
         }
         account = accountMapper.fromDto(accountDTO);
         account.setPassword(passwordEncoder.encode(account.getPassword()));
-        account.setAuthority(authorityRepository.findByRole(Roles.USER).orElse(null));
+        account.setAuthority(authorityRepository.findByRole(Roles.ROLE_USER).orElse(null));
         accountRepository.save(account);
         return new ResponseDTO(true, null);
     }

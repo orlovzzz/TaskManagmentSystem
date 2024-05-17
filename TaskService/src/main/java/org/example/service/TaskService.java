@@ -1,11 +1,9 @@
 package org.example.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.example.dto.AccountDTO;
+import org.example.dto.MessageDTO;
 import org.example.dto.TaskDTO;
 import org.example.dto.TaskWithExecutorsDTO;
 import org.example.entity.ExecutorsTasks;
@@ -48,12 +46,18 @@ public class TaskService {
     @Autowired
     private ExecutorsTaskRepository executorsTaskRepository;
     private final String BEARER_PREFIX = "Bearer ";
+    @Autowired
+    private NotificationProducer producer;
 
     public void createTask(String token, TaskDTO taskDTO) {
         AccountDTO account = getAccount(token, jwtUtils.extractAccountId(token.substring(BEARER_PREFIX.length())));
         Task task = taskMapper.fromDTO(taskDTO);
         task.setAuthorId(account.getId());
         task.setStatus(Status.PENDING);
+        producer.addMessageToNotificationsTopic(new MessageDTO(account.getEmail(), "Create task",
+                        "You have successfully created a task.\n" +
+                                "ID: " + task.getId() + "\nTitle: " + task.getTitle() + "\nDescription: " + task.getDescription() +
+                "\nPriority: " + task.getPriority()));
         taskRepository.save(task);
     }
 
@@ -66,8 +70,16 @@ public class TaskService {
     }
 
     public void setExecutorToTask(String taskId, String token) {
-        UUID executorId = UUID.fromString(jwtUtils.extractAccountId(token.substring("Bearer ".length())));
+        UUID executorId = UUID.fromString(jwtUtils.extractAccountId(token.substring(BEARER_PREFIX.length())));
         Task task = taskRepository.findById(UUID.fromString(taskId)).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        Thread thread = new Thread(() -> {
+            AccountDTO account = getAccount(token, executorId);
+            AccountDTO author = getAccount(token, task.getAuthorId());
+            producer.addMessageToNotificationsTopic(new MessageDTO(author.getEmail(), "Executor take your task",
+                    "Your task will be handled by the executor with \nID: " + account.getId() + "\nEmail: " + account.getEmail()));
+            System.out.println("SENDSENDSENDSENDSENDSENDSENDSENDSENDSENDSENDSENDSENDSEND");
+        });
+        thread.start();
         executorsTaskRepository.save(new ExecutorsTasks(new ExecutorsTasksId(executorId, task)));
     }
 
@@ -93,11 +105,24 @@ public class TaskService {
     public void setTaskStatus(String taskId, String status, String token) {
         Task task = taskRepository.findById(UUID.fromString(taskId))
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        Status beforeStatus = task.getStatus();
         UUID executorId = UUID.fromString(jwtUtils.extractAccountId(token.substring(BEARER_PREFIX.length())));
         executorsTaskRepository.findById(new ExecutorsTasksId(executorId, task))
                 .orElseThrow(() -> new IllegalArgumentException("Not the executor of this task"));
+        Thread thread = new Thread(() -> {
+            AccountDTO author = getAccount(token, task.getAuthorId());
+            producer.addMessageToNotificationsTopic(new MessageDTO(author.getEmail(), "Your task status has changed",
+                    "The task executor with ID " + executorId + " changed the task status from " + beforeStatus + " to " + Status.valueOf(status) + "."));
+        });
+        thread.start();
         task.setStatus(Status.valueOf(status));
         taskRepository.save(task);
+    }
+
+    public List<TaskDTO> getTasksWhereAccountExecutor(String accountId) {
+        List<ExecutorsTasks> executorsTasks = executorsTaskRepository.findByExecutorId(UUID.fromString(accountId));
+        List<TaskDTO> task = executorsTasks.stream().map(o -> taskMapper.fromEntity(o.getExecutorsTasksId().getTask())).collect(Collectors.toList());
+        return task;
     }
 
     @SneakyThrows
