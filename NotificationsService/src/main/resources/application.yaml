@@ -1,0 +1,14 @@
+spring:
+  kafka:
+    bootstrap-servers: "kafka:29092"
+#    bootstrap-servers: "localhost:9092"
+    consumer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringDeserializer
+
+mail:
+  username: sedman144@gmail.com
+  password: xtrv wdcj rgvy dcbf
+
+server:
+  port: 8083
