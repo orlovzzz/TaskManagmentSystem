@@ -1,0 +1,41 @@
+.account-information {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    height: auto;
+    background-color: #8EE4AF;
+}
+
+.account-information h2 {
+    font-weight: bolder;
+    font-size: 35px;
+    color: #05386B;
+    margin-top: 10px;
+    background-color: #8EE4AF;
+}
+
+.account-information * {
+    background-color: #8EE4AF;
+    font-weight: bold;
+    font-size: 20px;
+    color: #05386B;
+}
+
+.become-executor {
+    background-color: #05386B;
+    color: #8EE4AF;
+    width: 200px;
+    height: 35px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.no-tasks {
+    background-color: #8EE4AF;
+    font-weight: bold;
+    color:#05386B;
+    margin: 10px;
+}
