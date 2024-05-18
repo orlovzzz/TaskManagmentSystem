@@ -119,7 +119,7 @@ function Account(props) {
                                 ) : (
                                     <div>
                                         <p>Executor in task:</p>
-                                        <ul>
+                                        <ul className="no-markers">
                                             {executorTask.map(et => (
                                                 <li key={et.id}>{et.id}</li>
                                             ))}

@@ -19,7 +19,7 @@ server:
 secret:
   key: "gi5h4ni445985jv84b985b4h984bn98btn8b93v39rt3bt930vm30b4t3v3tiv38b"
 auth.service.url: "http://auth:8080"
-account.service.url: "http://account:8081"
+account.service.url: "http://account:8081/accountApi"
 #auth.service.url: "http://localhost:8080"
 #account.service.url: "http://localhost:8081"
 logging:
