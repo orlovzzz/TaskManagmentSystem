@@ -11,17 +11,17 @@ function App() {
   const authService = 'http://localhost:8080'
   const accountService = 'http://localhost:8081'
   const taskService = 'http://localhost:8082'
-  const url = 'http://localhost'
+  const url = 'http://localhost:80'
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Task authUrl={authService} taskUrl={taskService}/>}></Route>
-        <Route path="/login" element={<Login url={authService}/>}></Route>
-        <Route path="/registration" element={<Registration url={authService}/>}></Route>
-        <Route path="/accounts" element={<Account authUrl={authService} taskUrl={taskService} accountUrl={accountService}/>}></Route>
-        <Route path='/myAccount' element={<MyAccount authUrl={authService} taskUrl={taskService} accountUrl={accountService}/>}></Route>
-        <Route path='/createTask' element={<CreateTask taskUrl={taskService} accountUrl={accountService} authUrl={authService}/>}></Route>
+        <Route path="/" element={<Task url={url}/>}></Route>
+        <Route path="/login" element={<Login url={url}/>}></Route>
+        <Route path="/registration" element={<Registration url={url}/>}></Route>
+        <Route path="/accounts" element={<Account url={url}/>}></Route>
+        <Route path='/myAccount' element={<MyAccount url={url}/>}></Route>
+        <Route path='/createTask' element={<CreateTask url={url}/>}></Route>
       </Routes>
     </Router>
   );

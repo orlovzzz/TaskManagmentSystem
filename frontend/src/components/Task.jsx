@@ -15,7 +15,7 @@ function Task(props) {
     
     const handleDetailsButton = async (id) => {
         try {
-            const response = await axios.get(props.taskUrl + '/taskApi/task/' + id, {
+            const response = await axios.get(props.url + '/taskApi/task/' + id, {
                 headers: { 'Authorization': Cookies.get('token') }
             })
             setTaskDetails(response.data)
@@ -40,7 +40,7 @@ function Task(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(props.taskUrl + "/taskApi/task", {
+                const response = await axios.get(props.url + "/taskApi/task", {
                 headers: { 'Authorization': Cookies.get('token') }
                 });
                 console.log(response)
@@ -55,7 +55,7 @@ function Task(props) {
 
     const handleBecomeExecutor = async (id) => {
         try {
-            const response = await axios.post(props.taskUrl + '/taskApi/task/executor/' + id, {}, {
+            const response = await axios.post(props.url + '/taskApi/task/executor/' + id, {}, {
                 headers: {'Authorization': Cookies.get('token')}
             })
             window.location.reload();
@@ -73,7 +73,7 @@ function Task(props) {
 
     const handleLogout = async () => {
         try {
-            await axios.post(props.authUrl + '/authApi/blacklist', {}, {headers: {'Authorization': Cookies.get('token')}})
+            await axios.post(props.url + '/authApi/blacklist', {}, {headers: {'Authorization': Cookies.get('token')}})
             navigate('/login')
         } catch (error) {
             console.log(error.response)

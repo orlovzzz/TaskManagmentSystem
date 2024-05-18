@@ -18,7 +18,7 @@ function CreateTask(props) {
         setPriority('')
         setTitle('')
         try {
-            const response = await axios.post(props.taskUrl + '/taskApi/task', taskData, {headers: {'Authorization': Cookies.get('token')}})
+            const response = await axios.post(props.url + '/taskApi/task', taskData, {headers: {'Authorization': Cookies.get('token')}})
         } catch (error) {
             if (error.response && error.respose.status === 403) {
                 navigate('/login')
@@ -28,7 +28,7 @@ function CreateTask(props) {
 
     const handleLogout = async () => {
         try {
-            await axios.post(props.authUrl + '/authApi/blacklist', {}, {headers: {'Authorization': Cookies.get('token')}})
+            await axios.post(props.url + '/authApi/blacklist', {}, {headers: {'Authorization': Cookies.get('token')}})
             navigate('/login')
         } catch (error) {
             console.log(error.response)
