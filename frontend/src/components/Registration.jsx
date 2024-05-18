@@ -17,7 +17,7 @@ const Registration = (props) => {
         setEmail('')
         setPassword('')
         try {
-            const response = await axios.post(props.url + "/registration", { email, password })
+            const response = await axios.post(props.url + "/authApi/registration", { email, password })
             navigate('/login')
         } catch (error) {
             setErrorMessage(error.response.data.message)

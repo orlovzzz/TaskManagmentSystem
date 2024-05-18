@@ -22,7 +22,7 @@ function MyAccount(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(props.accountUrl + "/myAccount", {
+                const response = await axios.get(props.accountUrl + "/accountApi/myAccount", {
                 headers: { 'Authorization': Cookies.get('token') }
                 });
                 setAccountInformation(response.data)
@@ -40,7 +40,7 @@ function MyAccount(props) {
     
     const getAccountTasks = async (id) => {
         try {
-            const response = await axios.get(props.taskUrl + "/task/account/" + id, {
+            const response = await axios.get(props.taskUrl + "/taskApi/task/account/" + id, {
             headers: { 'Authorization': Cookies.get('token') }
             });
 
@@ -55,7 +55,7 @@ function MyAccount(props) {
 
     const getTasksWhereAccountExecutor = async (id) => {
         try {
-            const response = await axios.get(props.taskUrl + '/task/executor/' + id, {
+            const response = await axios.get(props.taskUrl + '/taskApi/task/executor/' + id, {
                 headers: { 'Authorization': Cookies.get('token') }
             })
             setExecutorInTasks(response.data)
@@ -69,7 +69,7 @@ function MyAccount(props) {
 
     const handleBecomeExecutor = async (id) => {
         try {
-            const response = await axios.post(props.accountUrl + '/accounts', {}, {
+            const response = await axios.post(props.accountUrl + '/accountApi/accounts', {}, {
                 headers: { 'Authorization': Cookies.get('token') }
             });
             window.location.reload();
@@ -83,7 +83,7 @@ function MyAccount(props) {
 
     const handleDetailsButton = async (id) => {
         try {
-            const response = await axios.get(props.taskUrl + '/task/' + id, {
+            const response = await axios.get(props.taskUrl + '/taskApi/task/' + id, {
                 headers: { 'Authorization': Cookies.get('token') }
             })
             setTaskDetails(response.data)
@@ -106,7 +106,7 @@ function MyAccount(props) {
     const handleConfirmClick = async (id) => {
         try {
             console.log(selectedStatus)
-            const response = await axios.post(props.taskUrl + '/task/status/' + id + '?status=' + selectedStatus, {}, { headers: {'Authorization': Cookies.get('token')} })
+            const response = await axios.post(props.taskUrl + '/taskApi/task/status/' + id + '?status=' + selectedStatus, {}, { headers: {'Authorization': Cookies.get('token')} })
             window.location.reload();
         } catch(error) {
             if (error.response && error.response.status === 403) {
@@ -118,7 +118,7 @@ function MyAccount(props) {
 
     const handleLogout = async () => {
         try {
-            await axios.post(props.authUrl + '/blacklist', {}, {headers: {'Authorization': Cookies.get('token')}})
+            await axios.post(props.authUrl + '/authApi/blacklist', {}, {headers: {'Authorization': Cookies.get('token')}})
             navigate('/login')
         } catch (error) {
             console.log(error.response)

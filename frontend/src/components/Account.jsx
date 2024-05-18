@@ -15,18 +15,18 @@ function Account(props) {
     
     const handleDetailsButton = async (id) => {
         try {
-            const response = await axios.get(props.accountUrl + '/accounts/' + id, {
+            const response = await axios.get(props.accountUrl + '/accountApi/accounts/' + id, {
                 headers: { 'Authorization': Cookies.get('token') }
             })
             setAccountDetails(response.data)
 
-            const response1 = await axios.get(props.taskUrl + '/task/account/' + id, {
+            const response1 = await axios.get(props.taskUrl + '/taskApi/task/account/' + id, {
                 headers: { 'Authorization': Cookies.get('token') }
             })
             setAccountTaskDetails(response1.data);
             console.log(response1);
 
-            const response2 = await axios.get(props.taskUrl + "/task/executor/" + id, {
+            const response2 = await axios.get(props.taskUrl + "/taskApi/task/executor/" + id, {
                 headers: { 'Authorization': Cookies.get('token') }
             })
             setExecutorTask(response2.data)
@@ -51,7 +51,7 @@ function Account(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(props.accountUrl + "/accounts", {
+                const response = await axios.get(props.accountUrl + "/accountApi/accounts", {
                 headers: { 'Authorization': Cookies.get('token') }
                 });
                 console.log(response)
@@ -66,7 +66,7 @@ function Account(props) {
 
     const handleLogout = async () => {
         try {
-            await axios.post(props.authUrl + '/blacklist', {}, {headers: {'Authorization': Cookies.get('token')}})
+            await axios.post(props.authUrl + '/authApi/blacklist', {}, {headers: {'Authorization': Cookies.get('token')}})
             navigate('/login')
         } catch (error) {
             console.log(error.response)

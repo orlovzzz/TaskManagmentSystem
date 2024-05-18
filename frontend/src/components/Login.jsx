@@ -18,7 +18,7 @@ const Login = (props) => {
         setEmail('')
         setPassword('')
         try {
-            const response = await axios.post(props.url + "/login", 
+            const response = await axios.post(props.url + "/authApi/login", 
             { email: email, password: password })
             Cookies.set('token', response.data.message)
             navigate('/')
