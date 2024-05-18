@@ -18,7 +18,7 @@ public class BlacklistTokensController {
     @Autowired
     private BlacklistTokensService blacklistTokensService;
 
-    @PostMapping("/blacklist")
+    @PostMapping("/authApi/blacklist")
     public ResponseEntity<String> addTokenInBlacklist(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
         blacklistTokensService.addTokenToBlacklist(token);

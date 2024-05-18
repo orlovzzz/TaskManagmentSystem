@@ -18,11 +18,13 @@ const Login = (props) => {
         setEmail('')
         setPassword('')
         try {
-            const response = await axios.post(props.url + "/login", { email: email, password: password })
+            const response = await axios.post(props.url + "/login", 
+            { email: email, password: password })
             Cookies.set('token', response.data.message)
             navigate('/')
         } catch (error) {
             setShowErrorPopup(true)
+            console.log(error)
             console.log(error.response)
             setErrorMessage(error.response.data.message)
         }

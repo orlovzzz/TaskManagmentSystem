@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/accountApi")
 @CrossOrigin(maxAge = 360000000)
 public class AccountController {
 

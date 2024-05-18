@@ -8,9 +8,10 @@ import CreateTask from "./components/CreateTask";
 
 function App() {
 
-  const authService = 'http://auth:8080'
-  const accountService = 'http://account:8081'
-  const taskService = 'http://task:8082'
+  const authService = 'http://localhost:8080'
+  const accountService = 'http://localhost:8081'
+  const taskService = 'http://localhost:8082'
+  const url = 'http://localhost'
 
   return (
     <Router>
