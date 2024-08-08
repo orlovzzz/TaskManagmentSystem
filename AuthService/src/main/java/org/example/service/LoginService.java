@@ -21,20 +21,16 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class LoginService {
-
     @Autowired
     private NotificationsProducer notificationsProducer;
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
-
     @Autowired
     private NotificationsProducer producer;
-
     @Value("${account.service.url}")
     private String URL;
     @Autowired
     private JwtUtils jwtUtils;
-
     @SneakyThrows
     public ResponseDTO login(AccountDTO account) {
         HttpEntity request = new HttpEntity<>(account);

@@ -15,7 +15,7 @@ public class BlacklistTokensService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public void addTokenToBlacklist(String token) {
+    public void addTokenInBlacklist(String token) {
         redisTemplate.opsForValue().set(token.hashCode(), token);
         long duration = jwtUtils.extractExpiration(token).getTime() - System.currentTimeMillis();
         redisTemplate.expire(token.hashCode(), duration, TimeUnit.MILLISECONDS);
