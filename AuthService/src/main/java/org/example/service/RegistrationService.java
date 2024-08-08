@@ -26,15 +26,15 @@ public class RegistrationService {
     private String URL;
 
     @SneakyThrows
-    public ResponseDTO registration(AccountDTO account) {
+    public boolean registration(AccountDTO account) {
         HttpEntity<AccountDTO> request = new HttpEntity<>(account);
         ResponseEntity<String> response = restTemplate.exchange(URL + "/createAccount", HttpMethod.POST, request, String.class);
         ResponseFromAccountServiceDTO responseFromService = objectMapper.readValue(response.getBody(), ResponseFromAccountServiceDTO.class);
         if (!responseFromService.isSuccess()) {
-            return new ResponseDTO(false, "An account with this email has already been registered");
+            return false;
         }
         notificationsProducer.addMessageToNotificationsTopic(new MessageDTO(account.getEmail(), "Registration",
                 "You have successfully registered.\nDon't forget your password: " + account.getPassword()));
-        return new ResponseDTO(true, "");
+        return true;
     }
 }

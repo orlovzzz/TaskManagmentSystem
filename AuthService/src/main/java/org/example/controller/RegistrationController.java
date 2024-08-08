@@ -23,7 +23,7 @@ public class RegistrationController {
     @Autowired
     private RegistrationService registrationService;
 
-    @Operation(summary = "Registration")
+    @Operation(summary = "Send message to account service for checking is account exists")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
                     @Content(mediaType = "application/json", schema =
@@ -35,12 +35,11 @@ public class RegistrationController {
             })
     })
     @PostMapping("/registration")
-    public ResponseEntity<ResponseDTO> registration(@RequestBody AccountDTO account) {
-        ResponseDTO response = registrationService.registration(account);
-        if (response.isSuccess()) {
+    public ResponseEntity registration(@RequestBody AccountDTO account) {
+        if (registrationService.registration(account)) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -22,16 +22,12 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    @Operation(summary = "Login")
+    @Operation(summary = "Send message to account service for checking is account data correct")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                    @Content(mediaType = "application/json", schema =
-                    @Schema(implementation = ResponseDTO.class))
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class))
             }),
-            @ApiResponse(responseCode = "400", description = "Wrong email or password", content = {
-                    @Content(mediaType = "application/json", schema =
-                    @Schema(implementation = ResponseDTO.class))
-            })
+            @ApiResponse(responseCode = "400", description = "Wrong email or password")
     })
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody AccountDTO account) {
@@ -39,6 +35,6 @@ public class LoginController {
         if (response.isSuccess()) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
