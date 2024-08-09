@@ -13,7 +13,7 @@ import java.util.Properties;
 public class SendMailService {
     @Autowired
     private Environment env;
-    public synchronized void sendEmail(String email, String subject, String text) {
+    public void sendEmail(String email, String subject, String text) {
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
