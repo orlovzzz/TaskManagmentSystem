@@ -65,9 +65,6 @@ public class AccountService {
         if (!accountDTO.getEmail().isEmpty()) {
             account.setEmail(accountDTO.getEmail());
         }
-        if (!accountDTO.getPassword().isEmpty()) {
-            account.setPassword(accountDTO.getPassword());
-        }
         accountRepository.save(account);
     }
 

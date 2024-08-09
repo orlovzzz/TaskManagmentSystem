@@ -8,7 +8,7 @@ import java.util.UUID;
 @Setter
 @ToString
 public class AccountDTO {
-    private UUID id;
-    private String email;
+    protected UUID id;
+    protected String email;
     private String password;
 }
