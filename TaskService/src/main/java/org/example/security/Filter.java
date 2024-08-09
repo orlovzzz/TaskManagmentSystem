@@ -35,6 +35,7 @@ public class Filter extends OncePerRequestFilter {
         String header = request.getHeader(HEADER_NAME);
         if (header == null || !StringUtils.startsWithIgnoreCase(header, BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
+            return;
         }
         String jwt = header.substring(BEARER_PREFIX.length()).trim();
         if (SecurityContextHolder.getContext().getAuthentication() == null) {

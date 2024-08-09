@@ -1,5 +1,10 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.dto.ChangeTaskDTO;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Task controller", description = "Create, change, get, delete task. Add comments")
 @RestController
 @RequestMapping("/taskApi")
 @CrossOrigin
@@ -22,6 +28,7 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @Operation(summary = "Create task")
     @PostMapping("/task")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity createTask(HttpServletRequest request, @RequestBody TaskDTO task) {
@@ -29,31 +36,58 @@ public class TaskController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Get all tasks")
     @GetMapping("/task")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity<List<TaskDTO>> getTasks() {
         return new ResponseEntity<>(taskService.getTasks(), HttpStatus.OK);
     }
 
+    @Operation(summary = "Set executor to task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
     @PostMapping("/task/executor/{taskId}")
     @RolesAllowed({"ADMIN", "EXECUTOR"})
     public ResponseEntity setExecutorToTask(@PathVariable String taskId, HttpServletRequest request) {
-        taskService.setExecutorToTask(taskId, getTokenFromHeader(request));
-        return new ResponseEntity(HttpStatus.OK);
+        try {
+            taskService.setExecutorToTask(taskId, getTokenFromHeader(request));
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
     }
 
+    @Operation(summary = "Get task by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Task not found", content = @Content())
+    })
     @GetMapping("/task/{taskId}")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity<TaskWithExecutorsDTO> getTaskById(@PathVariable String taskId, HttpServletRequest request) {
-        return new ResponseEntity<>(taskService.getTaskById(taskId, getTokenFromHeader(request)), HttpStatus.OK);
+        try {
+            TaskWithExecutorsDTO task = taskService.getTaskById(taskId, getTokenFromHeader(request));
+            return new ResponseEntity<>(task, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
+    @Operation(summary = "Get all task by account id. You will become a performer. Method take executor id from your JWT")
     @GetMapping("/task/account/{accountId}")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity<List<TaskDTO>> getTasksByAccountId(@PathVariable String accountId) {
         return new ResponseEntity<>(taskService.getTasksByAccountId(accountId), HttpStatus.OK);
     }
 
+    @Operation(summary = "Set status to task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Task not found"),
+            @ApiResponse(responseCode = "400", description = "Not the executor of this task")
+    })
     @PostMapping("/task/status/{taskId}")
     @RolesAllowed({ "EXECUTOR" })
     public ResponseEntity setTaskStatus(@PathVariable String taskId,
@@ -62,17 +96,26 @@ public class TaskController {
         try {
             taskService.setTaskStatus(taskId, status, getTokenFromHeader(request));
             return new ResponseEntity(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NullPointerException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
+    @Operation(summary = "Get all task where account executor")
     @GetMapping("/task/executor/{accountId}")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity<List<TaskDTO>> getTasksWhereAccountExecutor(@PathVariable String accountId) {
         return new ResponseEntity<>(taskService.getTasksWhereAccountExecutor(accountId), HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Task not found"),
+            @ApiResponse(responseCode = "400", description = "Don`t author of this task")
+    })
     @DeleteMapping("/task/{taskId}")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity deleteTask(@PathVariable String taskId, HttpServletRequest request) {
@@ -88,6 +131,12 @@ public class TaskController {
         }
     }
 
+    @Operation(summary = "Change task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Task not found"),
+            @ApiResponse(responseCode = "400", description = "Don`t author of this task")
+    })
     @PutMapping("/task")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity changeTask(@RequestBody ChangeTaskDTO taskDTO, HttpServletRequest request) {
@@ -101,6 +150,11 @@ public class TaskController {
         }
     }
 
+    @Operation(summary = "Add comment to task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
     @PostMapping("/task/comment")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity addComment(@RequestBody CommentDTO commentDTO, HttpServletRequest request) {

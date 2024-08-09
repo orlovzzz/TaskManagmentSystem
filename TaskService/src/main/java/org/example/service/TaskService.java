@@ -109,7 +109,7 @@ public class TaskService {
     }
     public void setTaskStatus(String taskId, String status, String token) {
         Task task = taskRepository.findById(UUID.fromString(taskId))
-                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+                .orElseThrow(() -> new NullPointerException("Task not found"));
         Status beforeStatus = task.getStatus();
         UUID executorId = UUID.fromString(jwtUtils.extractAccountId(token.substring(BEARER_PREFIX.length())));
         executorsTaskRepository.findById(new ExecutorsTasksId(executorId, task))
