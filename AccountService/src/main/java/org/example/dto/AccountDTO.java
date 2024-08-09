@@ -4,7 +4,9 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@ToString
 public class AccountDTO {
     private UUID id;
     private String email;

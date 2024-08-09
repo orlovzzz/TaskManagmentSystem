@@ -19,16 +19,21 @@ import java.util.stream.Collectors;
 @Service
 public class AccountService {
 
-    @Autowired
     private AccountMapper accountMapper;
-    @Autowired
     private AccountRepository accountRepository;
-    @Autowired
     private JwtUtils jwtUtils;
-    @Autowired
     private AuthorityRepository authorityRepository;
-    @Autowired
     private NotificationProducer producer;
+
+    @Autowired
+    public AccountService(AccountMapper accountMapper, AccountRepository accountRepository, JwtUtils jwtUtils,
+                          AuthorityRepository authorityRepository, NotificationProducer producer) {
+        this.accountMapper = accountMapper;
+        this.accountRepository = accountRepository;
+        this.jwtUtils = jwtUtils;
+        this.authorityRepository = authorityRepository;
+        this.producer = producer;
+    }
 
     public List<AccountWithRolesDTO> getAllAccounts(String token) {
         UUID id = UUID.fromString(jwtUtils.extractAccountId(token));
@@ -36,11 +41,6 @@ public class AccountService {
                 .stream().filter(t -> !t.getId().equals(id))
                 .map(o -> accountMapper.fromEntityToRolesDTO(o)).collect(Collectors.toList());
         return accountsList;
-    }
-
-    public AccountWithRolesDTO getMyAccount(String token) {
-        System.out.println(token);
-        return getAccountById(UUID.fromString(jwtUtils.extractAccountId(token)));
     }
 
     public AccountWithRolesDTO getAccountById(UUID id) {
@@ -62,12 +62,17 @@ public class AccountService {
 
     public void changeAccount(AccountDTO accountDTO) {
         Account account = accountRepository.findById(accountDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
-        if (accountDTO.getEmail() != null) {
-            account.setEmail(account.getEmail());
+        if (!accountDTO.getEmail().isEmpty()) {
+            account.setEmail(accountDTO.getEmail());
         }
-        if (accountDTO.getPassword() != null) {
-            account.setPassword(account.getPassword());
+        if (!accountDTO.getPassword().isEmpty()) {
+            account.setPassword(accountDTO.getPassword());
         }
+        accountRepository.save(account);
+    }
+
+    public AccountWithRolesDTO getMyAccount(String token) {
+        return getAccountById(UUID.fromString(jwtUtils.extractAccountId(token)));
     }
 
 }

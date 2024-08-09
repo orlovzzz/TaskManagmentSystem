@@ -9,29 +9,29 @@ import org.example.repository.AuthorityRepository;
 import org.example.roles.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Map;
-
 @Service
 public class AuthService {
 
-    @Autowired
     private AccountMapper accountMapper;
-    @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
     private AccountRepository accountRepository;
-    @Autowired
     private AuthorityRepository authorityRepository;
     @Value("${auth.service.url}")
     private String AUTH_URL;
+
+    @Autowired
+    public AuthService(AccountMapper accountMapper, PasswordEncoder passwordEncoder, AccountRepository accountRepository,
+                       AuthorityRepository authorityRepository) {
+        this.accountMapper = accountMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.accountRepository = accountRepository;
+        this.authorityRepository = authorityRepository;
+    }
 
     public ResponseDTO checkUserForLogin(AccountDTO accountDTO) {
         Account account = accountRepository.findByEmail(accountDTO.getEmail()).orElse(null);
