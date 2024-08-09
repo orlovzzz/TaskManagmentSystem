@@ -2,6 +2,8 @@ package org.example.controller;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
+import org.example.dto.ChangeTaskDTO;
+import org.example.dto.CommentDTO;
 import org.example.dto.TaskDTO;
 import org.example.dto.TaskWithExecutorsDTO;
 import org.example.service.TaskService;
@@ -57,15 +59,57 @@ public class TaskController {
     public ResponseEntity setTaskStatus(@PathVariable String taskId,
                                         @RequestParam("status") String status,
                                         HttpServletRequest request) {
-        System.out.println(status);
-        taskService.setTaskStatus(taskId, status, getTokenFromHeader(request));
-        return new ResponseEntity(HttpStatus.OK);
+        try {
+            taskService.setTaskStatus(taskId, status, getTokenFromHeader(request));
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/task/executor/{accountId}")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
     public ResponseEntity<List<TaskDTO>> getTasksWhereAccountExecutor(@PathVariable String accountId) {
         return new ResponseEntity<>(taskService.getTasksWhereAccountExecutor(accountId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/task/{taskId}")
+    @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
+    public ResponseEntity deleteTask(@PathVariable String taskId, HttpServletRequest request) {
+        try {
+            taskService.deleteTask(taskId, getTokenFromHeader(request));
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        catch (NullPointerException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        catch (IllegalArgumentException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/task")
+    @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
+    public ResponseEntity changeTask(@RequestBody ChangeTaskDTO taskDTO, HttpServletRequest request) {
+        try {
+            taskService.changeTask(getTokenFromHeader(request), taskDTO);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (NullPointerException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/task/comment")
+    @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
+    public ResponseEntity addComment(@RequestBody CommentDTO commentDTO, HttpServletRequest request) {
+        try {
+            taskService.addComment(commentDTO, getTokenFromHeader(request));
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
     }
 
     private String getTokenFromHeader(HttpServletRequest request) {

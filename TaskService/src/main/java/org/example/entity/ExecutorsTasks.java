@@ -1,19 +1,19 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "executors_tasks")
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class ExecutorsTasks implements Serializable {
     @EmbeddedId
     ExecutorsTasksId executorsTasksId;
