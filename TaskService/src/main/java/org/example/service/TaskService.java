@@ -9,10 +9,9 @@ import org.example.entity.ExecutorsTasksId;
 import org.example.entity.Task;
 import org.example.enums.Priority;
 import org.example.enums.Status;
+import org.example.mapper.TaskListMapper;
 import org.example.mapper.TaskMapper;
-import org.example.repository.CommentsRepository;
-import org.example.repository.ExecutorsTaskRepository;
-import org.example.repository.TaskRepository;
+import org.example.repository.*;
 import org.example.security.JwtUtils;
 import org.example.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -43,11 +47,12 @@ public class TaskService {
     private final String BEARER_PREFIX = "Bearer ";
     private NotificationProducer producer;
     private CommentsRepository commentsRepository;
+    private TaskListMapper taskListMapper;
 
     @Autowired
     public TaskService(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils, TaskRepository taskRepository,
                        TaskMapper taskMapper, ExecutorsTaskRepository executorsTaskRepository, NotificationProducer producer,
-                       CommentsRepository commentsRepository) {
+                       CommentsRepository commentsRepository, TaskListMapper taskListMapper) {
         this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
         this.taskRepository = taskRepository;
@@ -55,6 +60,7 @@ public class TaskService {
         this.executorsTaskRepository = executorsTaskRepository;
         this.producer = producer;
         this.commentsRepository = commentsRepository;
+        this.taskListMapper = taskListMapper;
     }
 
     public void createTask(String token, TaskDTO taskDTO) {
@@ -100,13 +106,20 @@ public class TaskService {
                 .collect(Collectors.toSet()));
         return taskWithExecutors;
     }
-    public List<TaskDTO> getTasksByAccountId(String accountId) {
-        List<TaskDTO> tasks = taskRepository.findByAuthorId(UUID.fromString(accountId)).stream()
-                .map(o -> taskMapper.fromEntity(o))
-                .peek(o -> o.setExecutorsCount(executorsTaskRepository.countExecutors(o.getId())))
-                .collect(Collectors.toList());
+
+    public List<TaskWithExecutorsDTO> getTasksByAccountId(String token, String accountId) {
+        List<Task> task = taskRepository.findByAuthorId(UUID.fromString(accountId));
+        List<TaskWithExecutorsDTO> tasks = new ArrayList<>(task.size());
+        for (Task t : task) {
+            TaskWithExecutorsDTO twe = taskMapper.fromEntityForExecutorsTask(t);
+            twe.setExecutors(t.getExecutorsTasks().stream()
+                    .map(o -> getAccount(token, o.getExecutorsTasksId().getExecutorId()))
+                    .collect(Collectors.toSet()));
+            tasks.add(twe);
+        }
         return tasks;
     }
+
     public void setTaskStatus(String taskId, String status, String token) {
         Task task = taskRepository.findById(UUID.fromString(taskId))
                 .orElseThrow(() -> new NullPointerException("Task not found"));
@@ -163,6 +176,18 @@ public class TaskService {
         Comments comment = new Comments(email, commentDTO.getComment(), task);
         task.getComments().add(comment);
         taskRepository.save(task);
+    }
+
+    public List<TaskDTO> getAllTasksWithFilter(String field, String pattern) throws NoSuchFieldException {
+        boolean isFieldPresent = Arrays.stream(Task.class.getDeclaredFields()).peek(o -> o.setAccessible(true))
+                .anyMatch(f -> f.getName().equals(field));
+        if(!isFieldPresent) throw new NoSuchFieldException();
+        CustomerSpecs spec = new CustomerSpecs(new SearchCriteria(field, pattern));
+        List<TaskDTO> taskDTO = taskRepository.findAll(spec).stream()
+                .map(o -> taskMapper.fromEntity(o))
+                .peek(o -> o.setExecutorsCount(executorsTaskRepository.countExecutors(o.getId())))
+                .collect(Collectors.toList());
+        return taskDTO;
     }
 
     @SneakyThrows

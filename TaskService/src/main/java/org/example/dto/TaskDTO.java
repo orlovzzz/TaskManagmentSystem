@@ -3,7 +3,6 @@ package org.example.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.entity.Comments;
 import org.example.enums.Priority;
 import org.example.enums.Status;
 

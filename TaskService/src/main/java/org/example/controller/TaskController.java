@@ -36,14 +36,27 @@ public class TaskController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Get all tasks")
+    @Operation(summary = "Get all tasks. " +
+            "You can filter response by id, title, description, priority, status and author id. Filter params not required.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "No such field", content = @Content)
+    })
     @GetMapping("/task")
     @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
-    public ResponseEntity<List<TaskDTO>> getTasks() {
+    public ResponseEntity<List<TaskDTO>> getTasks(@RequestParam(name = "field", required = false) String field,
+                                                  @RequestParam(name = "pattern", required = false) String pattern) {
+        if (field != null) {
+            try {
+                return new ResponseEntity<>(taskService.getAllTasksWithFilter(field, pattern), HttpStatus.OK);
+            } catch (NoSuchFieldException e) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
         return new ResponseEntity<>(taskService.getTasks(), HttpStatus.OK);
     }
 
-    @Operation(summary = "Set executor to task")
+    @Operation(summary = "Set executor to task. You will become executor. Method take executor id from your JWT")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Task not found")
@@ -75,13 +88,6 @@ public class TaskController {
         }
     }
 
-    @Operation(summary = "Get all task by account id. You will become a performer. Method take executor id from your JWT")
-    @GetMapping("/task/account/{accountId}")
-    @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
-    public ResponseEntity<List<TaskDTO>> getTasksByAccountId(@PathVariable String accountId) {
-        return new ResponseEntity<>(taskService.getTasksByAccountId(accountId), HttpStatus.OK);
-    }
-
     @Operation(summary = "Set status to task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -101,6 +107,13 @@ public class TaskController {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Operation(summary = "Get all task by account id")
+    @GetMapping("/task/account/{accountId}")
+    @RolesAllowed({"USER", "ADMIN", "EXECUTOR"})
+    public ResponseEntity<List<TaskWithExecutorsDTO>> getTasksByAccountId(HttpServletRequest request, @PathVariable String accountId) {
+        return new ResponseEntity<>(taskService.getTasksByAccountId(getTokenFromHeader(request), accountId), HttpStatus.OK);
     }
 
     @Operation(summary = "Get all task where account executor")
