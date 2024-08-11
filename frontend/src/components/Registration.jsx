@@ -11,7 +11,6 @@ const Registration = (props) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [showErrorPopup, setShowErrorPopup] = useState(false);
     const navigate = useNavigate();
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         setEmail('')
@@ -25,15 +24,12 @@ const Registration = (props) => {
             console.log(error.response)
         }
     };
-
     const handleRegisterRedirect = () => {
         navigate('/login');
     };
-
     const closeErrorPopup = () => {
         setShowErrorPopup(false);
     };
-
     return (
         <div className="login-container">
             <Helmet>
