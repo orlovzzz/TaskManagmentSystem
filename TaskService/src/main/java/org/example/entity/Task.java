@@ -1,10 +1,7 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.example.enums.Priority;
 import org.example.enums.Status;
 import org.hibernate.annotations.ColumnDefault;
@@ -19,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -44,5 +42,36 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comments> comments = new ArrayList<>();
+
+    public Task(String title, String description, Status status, Priority priority) {
+        this.id = UUID.randomUUID();
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+        this.authorId = UUID.randomUUID();
+    }
+
+    public Task(UUID id, String title, String description, Status status, Priority priority) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+        this.authorId = UUID.randomUUID();
+    }
+
+    public Task(UUID id, String title, String description, Status status, Priority priority, UUID authorId) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+        this.authorId = authorId;
+    }
+
+    public void addToExecutorsTasks(ExecutorsTasks executorsTasks) {
+        this.executorsTasks.add(executorsTasks);
+    }
 
 }

@@ -2,6 +2,7 @@ package org.example.mapper;
 
 import org.example.dto.CommentsResponseDTO;
 import org.example.entity.Comments;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

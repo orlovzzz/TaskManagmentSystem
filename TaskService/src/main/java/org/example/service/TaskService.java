@@ -1,6 +1,7 @@
 package org.example.service;
 
 import com.google.gson.Gson;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.example.dto.*;
 import org.example.entity.Comments;
@@ -20,12 +21,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,9 +30,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Setter
 public class TaskService {
-
-    private UserDetailsServiceImpl userDetailsService;
     @Value("${account.service.url}")
     private String ACCOUNT_URL;
     private JwtUtils jwtUtils;
@@ -47,20 +43,17 @@ public class TaskService {
     private final String BEARER_PREFIX = "Bearer ";
     private NotificationProducer producer;
     private CommentsRepository commentsRepository;
-    private TaskListMapper taskListMapper;
 
     @Autowired
-    public TaskService(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils, TaskRepository taskRepository,
-                       TaskMapper taskMapper, ExecutorsTaskRepository executorsTaskRepository, NotificationProducer producer,
-                       CommentsRepository commentsRepository, TaskListMapper taskListMapper) {
-        this.userDetailsService = userDetailsService;
+    public TaskService(JwtUtils jwtUtils, TaskRepository taskRepository,
+            TaskMapper taskMapper, ExecutorsTaskRepository executorsTaskRepository, NotificationProducer producer,
+            CommentsRepository commentsRepository) {
         this.jwtUtils = jwtUtils;
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
         this.executorsTaskRepository = executorsTaskRepository;
         this.producer = producer;
         this.commentsRepository = commentsRepository;
-        this.taskListMapper = taskListMapper;
     }
 
     public void createTask(String token, TaskDTO taskDTO) {
@@ -136,6 +129,7 @@ public class TaskService {
         task.setStatus(Status.valueOf(status));
         taskRepository.save(task);
     }
+
     public List<TaskDTO> getTasksWhereAccountExecutor(String accountId) {
         List<ExecutorsTasks> executorsTasks = executorsTaskRepository.findByExecutorId(UUID.fromString(accountId));
         List<TaskDTO> task = executorsTasks.stream()
@@ -190,25 +184,31 @@ public class TaskService {
         return taskDTO;
     }
 
-    @SneakyThrows
-    private AccountDTO getAccount(String token, String stringId) {
-        UUID id = UUID.fromString(stringId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", token);
-        HttpEntity entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(ACCOUNT_URL + "/accounts/" + id,
-                HttpMethod.GET, entity, String.class);
-        return gson.fromJson(response.getBody(), AccountDTO.class);
+    public AccountDTO getAccount(String token, String stringId) {
+        try {
+            UUID id = UUID.fromString(stringId);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", token);
+            HttpEntity entity = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(ACCOUNT_URL + "/accounts/" + id,
+                    HttpMethod.GET, entity, String.class);
+            return gson.fromJson(response.getBody(), AccountDTO.class);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
-    @SneakyThrows
-    private AccountDTO getAccount(String token, UUID id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", token);
-        HttpEntity entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(ACCOUNT_URL + "/accounts/" + id,
-                HttpMethod.GET, entity, String.class);
-        return gson.fromJson(response.getBody(), AccountDTO.class);
+    public AccountDTO getAccount(String token, UUID id) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", token);
+            HttpEntity entity = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(ACCOUNT_URL + "/accounts/" + id,
+                    HttpMethod.GET, entity, String.class);
+            return gson.fromJson(response.getBody(), AccountDTO.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

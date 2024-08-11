@@ -37,21 +37,20 @@ public class AccountService {
 
     public List<AccountWithRolesDTO> getAllAccounts(String token) {
         UUID id = UUID.fromString(jwtUtils.extractAccountId(token));
-        List<AccountWithRolesDTO> accountsList = accountRepository.findAll()
-                .stream().filter(t -> !t.getId().equals(id))
+        List<AccountWithRolesDTO> accountsList = accountRepository.findAll().stream()
                 .map(o -> accountMapper.fromEntityToRolesDTO(o)).collect(Collectors.toList());
         return accountsList;
     }
 
     public AccountWithRolesDTO getAccountById(UUID id) {
-        Account account = accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Account not found, id = " + id));
+        Account account = accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Account not found"));
         return accountMapper.fromEntityToRolesDTO(account);
     }
 
     public void setAccountToExecutorRole(String token) {
         UUID id = UUID.fromString(jwtUtils.extractAccountId(token));
         Account account = accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Account not found"));
-        account.setAuthority(authorityRepository.findByRole(Roles.ROLE_EXECUTOR).orElseThrow(() -> new IllegalArgumentException("Role not found")));
+        account.setAuthority(authorityRepository.findByRole(Roles.ROLE_EXECUTOR).get());
         producer.addMessageToNotificationsTopic(new MessageDTO(account.getEmail(), "Your role", "You have successfully become a executor."));
         accountRepository.save(account);
     }
@@ -72,4 +71,7 @@ public class AccountService {
         return getAccountById(UUID.fromString(jwtUtils.extractAccountId(token)));
     }
 
+    public void setAccountMapper(AccountMapper accountMapper) {
+        this.accountMapper = accountMapper;
+    }
 }
